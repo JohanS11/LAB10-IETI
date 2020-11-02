@@ -1,0 +1,30 @@
+{
+  "name": "todo-app",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@date-io/date-fns": "v1",
+    "@date-io/moment": "^2.1.0",
+    "@material-ui/core": "latest",
+    "@material-ui/icons": "^4.9.1",
+    "@material-ui/pickers": "latest",
+    "axios": "^0.20.0",
+    "date-fns": "latest",
+    "firebase": "^7.21.0",
+    "moment": "^2.22.2",
+    "react": "latest",
+    "react-datepicker": "^1.6.0",
+    "react-dom": "latest",
+    "react-moment": "^0.7.9",
+    "react-router-dom": "^4.3.1",
+    "react-scripts": "1.1.4",
+    "web-vitals": "^0.2.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "buildeploy": "npm run build && firebase deploy"
+  }
+}

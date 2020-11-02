@@ -1,0 +1,20 @@
+.root {
+    min-width: 20;
+    margin : auto;
+    background: 'red';
+}
+.color {
+    color : 'red';
+    
+}
+.bullet {
+    display: "inline-block";
+    margin: "0 2px";
+    transform: "scale(0.8)";
+}
+.title {
+    font-size: 24;
+}
+.pos {
+    margin-bottom: 12;
+}
