@@ -16,8 +16,8 @@ export class TodoApp extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {items: [], file : '',
-                            text: '', status: '', dueDate: moment(), responsible:'',isOpen:false,isOpenFilter:false,filtering:false};
+        this.state = {items: [], fileUrl : '',file : '',
+                            text: '', status: '', dueDate: moment(), responsiblename:'',responsiblemail:'',isOpen:false,isOpenFilter:false,filtering:false};
         this.state.itemsFiltered = [{status:"",dueDate: moment(),responsible:""}];
         this.state.itemsShow = [];
 
@@ -28,12 +28,13 @@ export class TodoApp extends Component {
         return (
                  
             <div className="App">
-                <TodoList todoList={this.state.filtering ? this.state.itemsShow: this.state.items}/>     
+                <TodoList todoList={this.state.items}/>     
                 <Dialog 
                 handleTextChange = {this.handleTextChange}
                 handleStatusChange = {this.handleStatusChange}
                 handleDateChange = {this.handleDateChange}
-                handleRespChange = {this.handleRespChange}
+                handleRespNameChange = {this.handleRespNameChange}
+                handleRespEmailChange = {this.handleRespEmailChange}
                 handleSubmit = {this.handleSubmit}
                 handleInputChange= {this.handleInputChange}
                 handleOpen = {this.handleOpen}
@@ -41,27 +42,9 @@ export class TodoApp extends Component {
                 state = {this.state}> 
                 </Dialog>
 
-                <FilterDialog 
-                handleStatusChange = {this.handleStatusChangeF}
-                handleDateChange = {this.handleDateChangeF}
-                handleRespChange = {this.handleRespChangeF}
-                handleSubmit = {this.handleSubmitFilter}
-                handleOpenFilter = {this.handleOpenFilter}
-                handleChangeFiltering = {this.handleChangeFiltering}
-                open = {this.state.isOpenFilter}
-                state = {this.state}> 
-                </FilterDialog>
-
                 <Fab aria-label='Add' onClick={() => this.handleOpen()} color='primary' style = {{right: '-45%'}}>  
                     <AddIcon/>   
-                </Fab>
-                <Fab aria-label='Filter' onClick={() => this.handleOpenFilter()} color='primary' style = {{right: '-19%'}}>  
-                    <SearchIcon/>   
-                </Fab>
-                <Fab aria-label='ChangeFilter' onClick={() => this.handleFiltering()} color='primary' style = {{right: '-25%'}}>  
-                    <CancelRoundedIcon/>   
-                </Fab>
-                          
+                </Fab>                  
             </div>
         );
     }
@@ -70,73 +53,15 @@ export class TodoApp extends Component {
         console.log("file");
         console.log(e.target.files[0]);
         this.setState({
-            file: e.target.files[0]
+            file: e.target.files[0],
+            fileUrl : e.target.files[0].name
         });                
-    }
-    handleStatusChangeF = (e) => {
-
-        this.state.itemsFiltered[0].status = e.target.value;
-        this.setState(
-            this.state
-        );
-    }
-
-   handleDateChangeF = (e) => {
-
-        console.log("Fecha");
-        this.state.itemsFiltered[0].dueDate = e;
-        this.setState(
-            this.state
-    );
-
-    }
-
-    handleRespChangeF = (e) =>{
-
-        this.state.itemsFiltered[0].responsible = e.target.value;
-        this.setState(
-            this.state
-        );
-       
-    }
-
-    handleSubmitFilter = () =>{
-        this.state.itemsShow = [];
-    
-        var itemsI = this.state.items;
-        var itemsF = this.state.itemsFiltered;
-        console.log("FILTROS");
-        console.log(this.state.itemsFiltered[0].dueDate.toString());
-        for (var i = 0 ; i < itemsI.length; i++){
-            if (itemsI[i].status === itemsF[0].status ||  itemsI[i].dueDate === itemsF[0].dueDate.toString() || itemsI[i].responsible === itemsF[0].responsible){
-                console.log("ENTREEEEEEE");
-                this.state.itemsShow.push(itemsI[i]);
-            }
-        }
-        console.log("SHOWWW");
-        console.log(this.state.itemsShow)
-        this.setState(this.state);
-        this.handleFiltering();
-        this.handleOpenFilter();
-
     }
 
     handleOpen = ()=>{
         this.setState({
             isOpen : !this.state.isOpen
         });
-    }
-
-    handleOpenFilter = () =>{
-        this.setState({
-            isOpenFilter : !this.state.isOpenFilter
-        });
-    }
-
-    handleFiltering = () =>{
-        this.setState({
-            filtering : !this.state.filtering
-        })
     }
 
     handleTextChange = (e) => {
@@ -157,20 +82,38 @@ export class TodoApp extends Component {
         });
     }
 
-    handleRespChange = (resp) =>{
+    handleRespNameChange = (resp) =>{
         this.setState({
-            responsible: resp.target.value
+            responsiblename: resp.target.value
         });
     }
+
+    handleRespEmailChange = (resp) =>{
+        this.setState({
+            responsiblemail: resp.target.value
+        });
+    }
+
 
     handleSubmit = (e) => {
         console.log(this.state);
         e.preventDefault();
-        if (!this.state.text.length || !this.state.status.length || !this.state.dueDate || !this.state.responsible.length){
+        if (!this.state.text.length || !this.state.status.length || !this.state.dueDate || !this.state.responsiblemail.length ){
             alert("Debe llenar todos los campos");
             return;}
 
         
+        const newItem = {
+            description : this.state.text,
+            status: this.state.status,
+            dueDate: this.state.dueDate,
+            responsible : {
+                name : this.state.responsiblename,
+                email : this.state.responsiblemail
+            },
+            fileUrl : "http://localhost:8080/api/files/"+ this.state.fileUrl
+        };
+        let that = this;
         let data = new FormData();
         data.append('file', this.state.file);
         console.log(data);  
@@ -178,25 +121,27 @@ export class TodoApp extends Component {
         axios.post(url, data)
             .then(function (response) {
                 console.log("file uploaded!", data);
+                that.addTask(newItem);
         })
         .catch(function (error) {
-            console.log("failed file upload", error);
+            console.log("File upload failed", error);
         });
+         
 
-        const newItem = {
-            text: this.state.text,
-            status: this.state.status,
-            dueDate: this.state.dueDate,
-            responsible : this.state.responsible,
-        };
-        this.addTask(newItem);
+     
+        
 
         this.setState(prevState => ({
             items: prevState.items.concat(newItem),
             text: '',
             status: '',
             dueDate: null,
-            responsible :''
+            responsible : {
+                name : '',
+                email : ''
+            },
+            fileUrl : '',
+            file : ''
         }));
         this.handleOpen();
         
@@ -204,14 +149,9 @@ export class TodoApp extends Component {
 
     componentDidMount() {
         
-        axios.get('https://lit-woodland-44812.herokuapp.com/api', 
-        {
-            headers: { 
-                    "Content-Type": "application/json",
-                    "Authorization": "Bearer " + localStorage.getItem("token")
-                    }
-        })
-         .then(response => { 
+        axios.get('http://localhost:8080/api/todo', 
+        ).then(response => { 
+            console.log(response.data);
             this.setState({
                 items: response.data
             });
@@ -224,16 +164,10 @@ export class TodoApp extends Component {
     }
 
         addTask = (task) => {
-            axios.post('https://lit-woodland-44812.herokuapp.com/api', 
+            axios.post('http://localhost:8080/api/todo', 
             task,
-            {
-                headers: { 
-                        "Content-Type": "application/json",
-                        "Authorization": "Bearer " + localStorage.getItem("token")
-                        }
-            })
-             .then(response => { 
-                this.componentDidMount();  
+            ).then(response => { 
+                this.componentDidMount();
              })
              .catch(error => {    
                 console.log(error)

@@ -14,7 +14,8 @@ export class Todo extends React.Component {
                 tareaN = {this.props.text} 
                 status = {this.props.status} 
                 date = {this.props.dueDate.toString()} 
-                responsible = {this.props.responsible}>
+                responsible = {this.props.responsible}
+                image ={this.props.fileUrl} >
             </OutlinedCard>
             <br/>
             </div>

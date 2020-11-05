@@ -88,17 +88,29 @@ export default function AlertDialogSlide(props) {
                         </Grid>
                     </MuiPickersUtilsProvider>
                     
+                    <label htmlFor="responsiblen" className="right-margin">
+                        Responsible name:
+                    </label>
+
+                    <TextField
+                        id="responsiblen"
+                        onChange={props.handleRespNameChange}
+                        value={props.state.responsiblename}>
+                    </TextField>
+
+            
+                    <br/>
+                    <br/>
+                    
                     <label htmlFor="responsible" className="right-margin">
-                        Responsible:
+                        email:
                     </label>
 
                     <TextField
                         id="responsible"
-                        onChange={props.handleRespChange}
-                        value={props.state.responsible}>
+                        onChange={props.handleRespEmailChange}
+                        value={props.state.responsiblemail}>
                     </TextField>
-  
-                    <br/>
                 </form>
                 <br/>
                 <br/>
