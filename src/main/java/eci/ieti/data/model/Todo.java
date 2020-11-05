@@ -23,7 +23,7 @@ public class Todo {
     public Todo(String description,Date dueDate, User responsible) {
         this.description = description;
         this.priority = 5;
-        this.dueDate = dueDate;
+        this.dueDate = dueDate; 
         this.responsible = responsible;
     }
 
